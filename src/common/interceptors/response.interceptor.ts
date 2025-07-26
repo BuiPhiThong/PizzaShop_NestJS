@@ -24,21 +24,43 @@ export class TransformInterceptor<T> implements NestInterceptor<T, ApiResponse<T
     intercept(context: ExecutionContext, next: CallHandler): Observable<ApiResponse<T>> {
         return next.handle().pipe(
             map(data => {
-                const Path = context.switchToHttp().getRequest().path;
+                Logger.log(data);
+
+                const path = context.switchToHttp().getRequest().path;
                 const method = context.switchToHttp().getRequest().method;
-                if (data && typeof data === 'object' && 'success' in data && 'message' in data) {
-                    return data as ApiResponse<T>;
-                }
-                const customMessage = data && typeof data === 'object' && 'message' in data ? data.message : this.getDefaultMessage(method);
-                const customData = data && typeof data === 'object' ? data.data : data;
+
+                const message = typeof data === 'string' || typeof data === 'number' || typeof data === 'boolean'
+                    ? String(data) // Dùng string làm message luôn
+                    : data && typeof data === 'object' && 'message' in data
+                        ? data.message
+                        : this.getDefaultMessage(method);
+
+
+                const unwrapData = (input: any): any => {
+                    if (input && typeof input === 'object' && 'message' in input && Object.keys(input).length === 1) {
+                        return undefined;
+                    }
+
+                    if (input && typeof input === 'object' && 'data' in input && (Object.keys(input).length === 1 || (Object.keys(input).length === 2 && 'message' in input))) {
+                        return input.data;
+                    }
+                    if (typeof input === 'string' || typeof input === 'number' || typeof input === 'boolean') {
+                        return undefined;
+                    }
+                    return input;
+                };
+
+                const rawData = unwrapData(data);
                 return {
                     success: true,
-                    message: customMessage,
-                    data: customData,
+                    message: message,
+                    data: rawData,
                     date: new Date(),
-                    path: Path
+                    path: path
                 };
             })
         );
     }
+
+
 }

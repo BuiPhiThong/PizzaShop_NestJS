@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { Category } from '@/models';
@@ -9,18 +9,20 @@ export class CategoryService {
 
     constructor(
         @InjectModel(Category) private categoryModel: typeof Category
-        
+
     ) { }
 
-    createCategory(createCategoryDto: CreateCategoryDto) {        
+    createCategory(createCategoryDto: CreateCategoryDto) {
         return this.categoryModel.create(createCategoryDto as Category);
     }
 
     findAllCategories() {
-    //    return this.categoryModel.findAll();
-    return {  
-        message:'Thành công lẻ',
-        data:{}
+        return {
+            message:"Ok"
+        }
     }
+
+    findOneCategory(id: number) {
+        return this.categoryModel.findByPk(id);
     }
 }
