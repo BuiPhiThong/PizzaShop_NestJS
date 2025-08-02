@@ -1,8 +1,9 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { Category } from '@/models';
 import { InjectModel } from '@nestjs/sequelize';
+import { NotFoundError, throwError } from 'rxjs';
 
 @Injectable()
 export class CategoryService {
@@ -16,13 +17,18 @@ export class CategoryService {
         return this.categoryModel.create(createCategoryDto as Category);
     }
 
-    findAllCategories() {
+    async findAllCategories() {
         return {
-            message:"Ok"
+            data: await this.categoryModel.findAll(),        
         }
     }
 
-    findOneCategory(id: number) {
-        return this.categoryModel.findByPk(id);
+   async findOneCategory(id: number) {
+        const result = await this.categoryModel.findByPk(id);
+        if(!result){
+            throw new NotFoundException(`Category with id ${id} not found!!!`)
+        }
+        
+        return result
     }
 }

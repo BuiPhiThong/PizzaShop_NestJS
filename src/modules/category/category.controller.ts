@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpException, HttpStatus } from '@nestjs/common';
 import { CategoryService } from './category.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
@@ -12,7 +12,10 @@ export class CategoryController {
   createCategory(@Body() categoryData: CreateCategoryDto) {
     return this.categoryService.createCategory(categoryData)
   }
-
+  @Post('string-error')
+  aaa() {
+    throw new HttpException('Internal Server czxczxc', HttpStatus.INTERNAL_SERVER_ERROR);
+  }
   @Get('all')
   findAllCategories() {
     return this.categoryService.findAllCategories();

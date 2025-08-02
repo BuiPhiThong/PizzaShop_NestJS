@@ -24,43 +24,56 @@ export class TransformInterceptor<T> implements NestInterceptor<T, ApiResponse<T
     intercept(context: ExecutionContext, next: CallHandler): Observable<ApiResponse<T>> {
         return next.handle().pipe(
             map(data => {
-                Logger.log(data);
-
-                const path = context.switchToHttp().getRequest().path;
                 const method = context.switchToHttp().getRequest().method;
+                const path = context.switchToHttp().getRequest().path;
+                const request = context.switchToHttp().getRequest();
 
-                const message = typeof data === 'string' || typeof data === 'number' || typeof data === 'boolean'
-                    ? String(data) // Dùng string làm message luôn
-                    : data && typeof data === 'object' && 'message' in data
-                        ? data.message
-                        : this.getDefaultMessage(method);
+                const startTime = request['startTime']                
+                const endTime = Date.now();
+                const takenTime = endTime - startTime;
+                const formattedMessage = typeof data === 'string' || typeof data === 'number' || typeof data === 'boolean'
+                    ? String(data) : data && typeof data === 'object' && data !== null && 'message' in data
+                        ? data?.message : this.getDefaultMessage(method)
 
-
-                const unwrapData = (input: any): any => {
-                    if (input && typeof input === 'object' && 'message' in input && Object.keys(input).length === 1) {
-                        return undefined;
+                const formattedData = (item: any) => {
+                    if (item && typeof item === 'object' && item !== null && 'message' in item && Object.keys(item).length === 1) {
+                        return undefined
                     }
 
-                    if (input && typeof input === 'object' && 'data' in input && (Object.keys(input).length === 1 || (Object.keys(input).length === 2 && 'message' in input))) {
-                        return input.data;
+                    if (item && typeof item === 'object' && item !== null && 'data' in item && Object.keys(item).length === 1 || (item !== null && 'message' in item && Object.keys(item).length === 2)) {
+                        return item?.data
                     }
-                    if (typeof input === 'string' || typeof input === 'number' || typeof input === 'boolean') {
-                        return undefined;
+                    if (typeof item === 'string' || typeof item === 'number' || typeof item === 'boolean') {
+                        return item
                     }
-                    return input;
-                };
+                   
+                    const serialize = (val: any) => typeof val?.toJSON === 'function' ? val.toJSON() : val;
+                    
+                    if (Array.isArray(item)) {
+                        return item.map(serialize);
+                    }
 
-                const rawData = unwrapData(data);
+                    if (typeof item === 'object' && item !== null) {
+                        return serialize(item);
+                    }
+
+                    return item;
+                }
+                const finalData = formattedData(data)
                 return {
                     success: true,
-                    message: message,
-                    data: rawData,
+                    message: formattedMessage,
+                    data: finalData,
                     date: new Date(),
-                    path: path
-                };
+                    path: path,
+                    takenTime: `${takenTime}ms`
+                }
             })
         );
     }
-
-
 }
+
+
+// Logger.log(data);
+
+

@@ -3,10 +3,12 @@ import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
 import { ValidationPipe } from '@nestjs/common';
 import { TransformInterceptor } from './common/interceptors/response.interceptor';
+import { AllExceptionFilter } from './common/filter/all-exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  app.useGlobalFilters(new AllExceptionFilter())
   app.useGlobalPipes(new ValidationPipe({
     whitelist: true, // xóa các fields dư trong payload,
     forbidNonWhitelisted: true, // báo lỗi ra postmman
