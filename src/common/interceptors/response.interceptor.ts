@@ -64,8 +64,8 @@ export class TransformInterceptor<T> implements NestInterceptor<T, ApiResponse<T
                     success: true,
                     message: formattedMessage,
                     data: finalData,
-                    date: new Date(),
-                    path: path,
+                    date: new Date().toLocaleString('vi-VN',{timeZone: 'Asia/Ho_Chi_Minh',hour12: false}),
+                    path: path, //path
                     takenTime: `${takenTime}ms`
                 }
             })

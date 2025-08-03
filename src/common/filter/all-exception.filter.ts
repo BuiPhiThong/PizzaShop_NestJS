@@ -47,7 +47,7 @@ export class AllExceptionFilter implements ExceptionFilter {
             error,
             message,
             path: request.url,
-            date: new Date(),
+            date: new Date().toLocaleString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh', hour12: false }),
             takenTime: `${takenTime}ms`
         };
 

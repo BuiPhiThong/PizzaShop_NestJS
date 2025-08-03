@@ -2,11 +2,8 @@ import { Type } from "class-transformer";
 import { IsBoolean, IsNumber, IsOptional, IsString } from "class-validator";
 
 export class CreateCategoryDto {
-    @IsString()
+    @IsString({message:'Name là bắt buộc'})
     name: string;
-
-    @IsString()
-    slug:string;
 
     @IsString()
     @IsOptional()

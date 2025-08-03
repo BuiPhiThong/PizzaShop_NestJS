@@ -1,7 +1,7 @@
-import { Column, DataType, HasMany, Model, Table } from 'sequelize-typescript';
+import { BeforeUpdate, BeforeValidate, Column, DataType, HasMany, Model, Table } from 'sequelize-typescript';
 import { Product } from './product.model';
 import { Ingredient } from './ingredient.model';
-
+import { Helper } from '../utils/helper'
 @Table
 export class Category extends Model<Category> {
     @Column({
@@ -44,4 +44,22 @@ export class Category extends Model<Category> {
 
     @HasMany(() => Ingredient)
     ingredients: Ingredient[]
+
+
+    @BeforeValidate //chạy khi tạo bản ghi mới và cũng chạy khi before update
+    static makeSlug(newCategory: Category) {
+        const name = newCategory.dataValues.name
+        if (newCategory.isNewRecord && name) {
+            const slug = Helper.converttoSlug(name)
+            newCategory.setDataValue('slug', slug)
+        }
+    }
+
+    @BeforeUpdate
+    static updateCategory(category: Category){
+        if(category.changed('name')){
+            const slug = Helper.converttoSlug(category.dataValues.name)
+            category.setDataValue('slug', slug)
+        }
+    }
 }

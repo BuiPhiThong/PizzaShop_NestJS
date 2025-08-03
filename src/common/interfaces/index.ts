@@ -3,7 +3,7 @@ export interface ApiResponse<T>{
     message: string;
     data?: T,
     error?: string | string[],
-    date?: Date,
+    date?: string,
     path?: string,
     takenTime?: string
 }

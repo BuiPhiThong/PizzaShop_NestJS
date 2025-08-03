@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpException, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpException, HttpStatus, ParseIntPipe } from '@nestjs/common';
 import { CategoryService } from './category.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
@@ -12,18 +12,27 @@ export class CategoryController {
   createCategory(@Body() categoryData: CreateCategoryDto) {
     return this.categoryService.createCategory(categoryData)
   }
-  @Post('string-error')
-  aaa() {
-    throw new HttpException('Internal Server czxczxc', HttpStatus.INTERNAL_SERVER_ERROR);
+
+  @Patch('update/:id')
+  updateCategory(@Body() updateCategoryDto: UpdateCategoryDto, @Param('id', ParseIntPipe) id: number) {
+    return this.categoryService.updateCategory(updateCategoryDto, id)
   }
+
   @Get('all')
   findAllCategories() {
     return this.categoryService.findAllCategories();
   }
 
   @Get('one/:id')
-  FineOneCategory(@Param('id') id: number) {
+  findOneCategory(@Param('id') id: number) {
     return this.categoryService.findOneCategory(id);
   }
+
+  @Delete('delete/:id') // Xóa cứng
+  deleteCategory(@Param('id', ParseIntPipe) id: number) {
+    return this.categoryService.delCategory(id)
+  }
+
+
 
 }
