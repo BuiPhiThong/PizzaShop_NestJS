@@ -33,6 +33,4 @@ export class CategoryController {
     return this.categoryService.delCategory(id)
   }
 
-
-
 }

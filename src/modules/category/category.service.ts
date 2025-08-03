@@ -44,7 +44,6 @@ export class CategoryService {
                 exclude: ["createdAt", "updatedAt", "isActive"]
             }
         })
-
         return {
             data
         }
