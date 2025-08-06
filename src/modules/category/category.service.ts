@@ -12,7 +12,6 @@ export class CategoryService {
 
     constructor(
         @InjectModel(Category) private categoryModel: typeof Category
-
     ) { }
 
     async createCategory(createCategoryDto: CreateCategoryDto) {

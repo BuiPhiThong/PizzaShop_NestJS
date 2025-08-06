@@ -1,20 +1,15 @@
-import { Type } from "class-transformer";
-import { IsBoolean, IsNumber, IsOptional, IsString } from "class-validator";
-
+import { BooleanNotRequired, NumberNotRequired, StringNotRequired, StringRequired } from "@/common/decorators";
 export class CreateCategoryDto {
-    @IsString({message:'Name là bắt buộc'})
+   
+    @StringRequired('Tên danh mục')
     name: string;
-
-    @IsString()
-    @IsOptional()
+    
+    @StringNotRequired
     description?: string;
 
-    @IsOptional()
-    @Type(() => Number)
-    @IsNumber()
+    @NumberNotRequired
     sortOrder?: number;
 
-    @IsBoolean()
-    @IsOptional()
+    @BooleanNotRequired
     isActive?: boolean
 }

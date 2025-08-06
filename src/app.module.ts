@@ -13,8 +13,9 @@ import { StartTimingMiddleware } from './common/middlewares/start-timing.middlew
     }),
     
     SequelizeModule.forRootAsync({
-      inject: [ConfigService],
-      useFactory: (config: ConfigService) => sequelizeConfig(config)
+      inject: [ConfigService,],
+      useFactory: (config: ConfigService) => sequelizeConfig(config),
+
     }),
     CategoryModule,
   ]
